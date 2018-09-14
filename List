@@ -1,0 +1,219 @@
+#ifndef _LIST_H_
+#define _LIST_H_
+
+template<class T>
+class List{
+private:
+
+//链表结构体
+struct NodeList
+{
+		T data;
+		NodeList *next;
+		NodeList(T data):data(data),next(NULL){}
+};
+
+//头指针结构体
+struct headNode
+{
+	NodeList* next;
+	headNode():next(NULL){};
+};
+
+public:
+
+	List()
+	{
+		head=new headNode;
+	}
+
+	~List()
+	{
+		distory();
+		delete head;
+	}
+	
+	//头插法
+	void push_back(T data)
+	{
+		NodeList* node=new NodeList(data);
+		if(head->next==NULL)
+		{
+			head->next=node;
+			return;
+		}
+		NodeList* p=head->next;
+		while(p->next!=NULL)
+			p=p->next;
+		p->next=node;
+	}
+
+	//判空
+	bool empty()
+	{
+		if(head->next!=NULL)
+			return true;
+		else
+			return false;
+	}
+
+	//销毁链表
+	void distory()
+	{
+		if(head->next==NULL)
+			return;
+		NodeList* p=head->next;
+		while(p->next!=NULL)
+		{
+			NodeList* q=p->next;
+			delete p;
+			p=q;
+		}
+		delete p;
+	}
+
+	//遍历链表
+	void travers(void(*func)(T& n))
+	{
+		if(!empty())
+			return;
+		NodeList* node=head->next;
+		while(node!=NULL)
+		{
+			func(node->data);
+			node=node->next;
+		}
+	}
+
+	//获取链表长度
+	int size()
+	{
+		int len=0;
+		NodeList* data=head->next;
+		while(data!=NULL)
+		{
+			data=data->next;
+			++len;
+		}
+		return len;
+	}
+
+	//归并排序
+	void MargeSort()
+	{
+		
+	}
+
+	/*
+	*插入排序
+	*/
+	void InsertSort()
+	{
+		_InsertSort();
+	}
+
+	/*
+	*参数为函数指针的插入排序
+	*/
+	void InsertSort(bool (*compar)(T& data1,T& data2))
+	{
+		_InsertSort(compar);
+	}
+private:
+/*
+*插入排序
+*此处默认为升序排序
+*只能对普通数据类型进行升序排序
+*/
+	void _InsertSort()
+	{
+		if(head->next==NULL)			 //list为空，直接退出
+			return;
+		NodeList* tail=head->next->next;//尾节点指针，这里为第一个节点所指向的位置
+		head->next->next=NULL;			//默认第一个节点为以排序好的序列，所以它为初始序列，后面的每个元素和排好的序列比较
+		while(tail!=NULL)				//一直比较到尾节点为空
+		{
+			NodeList* p=tail;			//获取要比较的元素
+			tail=tail->next;			//指向下一个要比较的元素
+			NodeList* myhead=head->next;//要比较序列的头节点
+
+			/*比较序列时有三种情况：
+			*1.要比较的元素位置在序列开头，头插法，并使List类head指针指向元素p		
+			*2.要比较的元素在序列中间，此时正常插入节点p
+			*3.要比较的元素在序列尾部，尾插法，并使节点p的next指针指向NULL
+			*/
+			if((p->data)<(myhead->data))//第一种情况
+			{
+				head->next=p;
+				p->next=myhead;
+				continue;
+			}
+			while(myhead->next!=NULL&&(myhead->next->data)<(p->data))//循环完成后myhead指向要插入位置的前一个节点
+				myhead=myhead->next;
+			if(myhead->next==NULL)//判断是否为第三种情况
+			{
+				myhead->next=p;
+				p->next=NULL;
+				continue;
+			}
+			p->next=myhead->next;//第二种情况
+			myhead->next=p;
+		}
+	}
+
+
+	/*
+	*带参数的插入排序，可对任意数据类型进行自定义的排序
+	*/
+	void _InsertSort(bool (*compar)(T& data1,T& data2))
+	{
+		if(head->next==NULL)
+			return;
+		NodeList* tail=head->next->next;
+		head->next->next=NULL;
+		while(tail!=NULL)
+		{
+			NodeList* p=tail;
+			tail=tail->next;
+			NodeList* myhead=head->next;
+			if(compar((p->data),(myhead->data)))
+			{
+				head->next=p;
+				p->next=myhead;
+				continue;
+			}
+			while(myhead->next!=NULL&&compar((myhead->next->data),(p->data)))
+				myhead=myhead->next;
+			if(myhead->next==NULL)
+			{
+				myhead->next=p;
+				p->next=NULL;
+				continue;
+			}
+			p->next=myhead->next;
+			myhead->next=p;
+		}
+	}
+
+	//排序
+	void _MargeSort(int begin,int end)
+	{
+		if(begin>=end)
+			return;
+		int mid=(begin+end)/2;
+		_MargeSort(begin,mid-1);
+		_MargeSort(mid,end);
+		_Marge(begin,mid,end);
+	}
+
+
+	//归并
+	void _Marge(int begin,int mid,int end)
+	{
+		
+	}
+private:
+  	headNode* head;
+};
+
+#endif

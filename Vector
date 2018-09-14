@@ -1,0 +1,132 @@
+#ifndef _VECTOR_
+#define _VECTOR_
+template<class T>
+class Vector
+{
+public:
+	Vector()
+	{
+		len=0;
+		cap=100;
+		buff=new T[cap];
+	}
+
+	~Vector()
+	{
+		delete []buff;
+		len=0;
+		cap=0;
+	}
+
+	int size()
+	{
+		return len;
+	}
+	
+	void swap(Vector& v)
+	{
+		
+	}
+
+	void push_back(const T& data)
+	{
+		if(len==cap)
+		{
+			cap+=INCREMENT_SIZE;
+			T* p=new T[cap];
+			memcpy(p,buff,len*sizeof(T));
+			delete []buff;
+			buff=p;
+		}
+		buff[len]=data;
+		++len;
+	}
+
+	void push_front(const T& data)
+	{
+		if(len==cap)
+		{
+			cap+=INCREMENT_SIZE;
+			T* p=new T[cap];
+			memcpy(p,buff,len*sizeof(T));
+			delete []buff;
+			buff=p;
+		}
+		for(int i=len-1;i>=0;--i)
+			buff[i+1]=buff[i];
+		buff[0]=data;
+		++len;
+	}
+
+	void insert(int pos,const T& data)
+	{
+		if(pos>len) pos=len;
+		if(pos<0) pos=0;
+			if(len==cap)
+		{
+			cap+=INCREMENT_SIZE;
+			T* p=new T[cap];
+			memcpy(p,buff,len*sizeof(T));
+			delete []buff;
+			buff=p;
+		}
+		for(int i=len-1;i>=pos;--i)
+			buff[i+1]=buff[i];
+		buff[pos]=data;
+		++len;
+	}
+	
+	bool remove(const T& data)
+	{
+		int i;
+		for(i=0;i<len;++i)
+		{
+			if(buff[i] == data) break;
+		}
+		if(i == len) return false;
+		for(; i < len - 1; ++i)
+			buff[i] = buff[i+1];
+		--len;
+		return true;
+	}
+	
+
+
+	T &operator[](int i)
+	{
+		return buff[i];
+	}
+
+	void sort()
+	{
+		_quickSort(0,len-1);
+	}
+private:
+	void _quickSort(int start,int end)
+	{
+		if(start>=end)
+			return;
+		int key=buff[start];
+		int i=start,j=end;
+		while(i<j)
+		{
+			while(i<j&&buff[j]>=key)
+				j--;
+			buff[i]=buff[j];
+			while(i<j&&buff[i]<=key)
+				i++;
+			buff[j]=buff[i];
+		}
+		buff[i]=key;
+		_quickSort(start,i-1);
+		_quickSort(i+1,end);
+	}
+
+private:
+	T* buff;
+	int len;//当前长度
+	int cap;//当前容量
+	enum {INCREMENT_SIZE=10};
+};
+
+#endif
